@@ -179,9 +179,9 @@ function iconPath(name) {
 function createWindow(show) {
   win = new BrowserWindow({
     width: 460,
-    height: 600,
+    height: 680,
     minWidth: 380,
-    minHeight: 480,
+    minHeight: 520,
     show,
     title: "Cacaduu Upload",
     icon: iconPath("icon.png"),
