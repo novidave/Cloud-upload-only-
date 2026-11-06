@@ -1,7 +1,7 @@
 # Cacaduu Upload
 
-A small desktop app for a shop's computer (Windows `.exe`, macOS `.dmg`). It has one page, **Export folder**, and
-runs in the background. Every 15 minutes it sends the newest stock file from the shop's export folder to
+A small desktop app for a shop's computer (Windows `.exe`, macOS `.dmg`, each a few MB). It has one page,
+**Export folder**, and runs in the background. Every 15 minutes it sends the newest stock file from the shop's export folder to
 **cacaduu.com**.
 
 It works like the website's **Môj obchod → Priečinok s exportom** page in Edge or Chrome, but it runs without a
@@ -32,29 +32,38 @@ Cacaduu refuses files, and the app shows that message instead of sending anythin
 GitHub Actions builds both on every push (see `.github/workflows/build.yml`). Open the repository's **Actions** tab,
 then the latest **Build installers** run. Under **Artifacts** you will find:
 
-- `Cacaduu-Upload-Windows` → `Cacaduu-Upload-Setup-<version>.exe` (installs for the current user, no admin rights)
-- `Cacaduu-Upload-macOS` → `Cacaduu-Upload-<version>-arm64.dmg` (Apple Silicon) and `…-x64.dmg` (Intel)
+- `Cacaduu-Upload-Windows` → `Cacaduu Upload_<version>_x64-setup.exe` (installs for the current user, no admin rights)
+- `Cacaduu-Upload-macOS` → `Cacaduu Upload_<version>_universal.dmg` (Apple Silicon and Intel)
 
-To publish them as a GitHub release, push a tag such as `v1.0.0`.
+To publish them as a GitHub release, push a tag such as `v1.1.0`.
 
 The installers are not signed with a paid certificate yet:
 
-- **Windows:** SmartScreen may say "Windows protected your PC". Click **More info**, then **Run anyway**.
+- **Windows:** SmartScreen may say "Windows protected your PC". Click **More info**, then **Run anyway**. The app
+  uses Windows' own Edge WebView2 (already on Windows 10 and 11); on an old PC without it, the installer downloads it
+  once.
 - **macOS:** drag the app to Applications and open it. If macOS blocks it, go to **System Settings → Privacy &
   Security** and click **Open Anyway**.
 
 ## Development
 
+Built with [Tauri 2](https://tauri.app): the page is plain HTML/CSS/JS, the background work is Rust, and the window
+uses the system's own web view, which keeps the installers small.
+
 ```bash
 npm install
-npm test          # the folder rules and the calls to Cacaduu
-npm start         # run the app
-npm run dist:win  # Windows .exe (on Linux this needs Wine)
-npm run dist:mac  # macOS .dmg (on a Mac only)
+npm test           # cargo test: the folder rules and the calls to Cacaduu (against a local stand-in)
+npm start          # run the app
+npm run build:win  # Windows .exe (on Windows)
+npm run build:mac  # macOS universal .dmg (on a Mac)
 ```
 
-`src/main.js` holds the window, the tray, the login and the 15-minute loop. `src/sync.js` holds the folder rules.
-`src/cloud.js` holds the calls to Cacaduu. `src/page/` is the one page.
+- `src/page/` is the one page.
+- `src-tauri/src/main.rs` holds the window, the tray, the login (the refresh token lives in Windows Credential
+  Manager or the macOS Keychain) and the 15-minute loop.
+- `src-tauri/src/sync.rs` holds the folder rules.
+- `src-tauri/src/cloud.rs` holds the calls to Cacaduu.
+- `src-tauri/strings.json` holds the texts (Slovak and English).
 
 The app uses only Cacaduu's public settings: the Supabase project address and its publishable key. Everything is
 checked on the server with the owner's own login (`my_shops`, `upload_check_in`, `stock-pull`). The API is described

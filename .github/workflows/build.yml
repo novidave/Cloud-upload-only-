@@ -1,7 +1,7 @@
 name: Build installers
 
-# Every push builds the macOS .dmg and the Windows .exe (download them under the run's "Artifacts").
-# A tag like v1.0.0 also publishes them as a GitHub release.
+# Every push builds the Windows .exe and the macOS .dmg (download them under the run's "Artifacts").
+# A tag like v1.1.0 also publishes them as a GitHub release.
 on:
   push:
     branches: ["**"]
@@ -17,25 +17,31 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            script: dist:mac
-            files: dist/*.dmg
-            name: Cacaduu-Upload-macOS
           - os: windows-latest
-            script: dist:win
-            files: dist/*.exe
+            script: build:win
+            rust_targets: ""
+            files: src-tauri/target/release/bundle/nsis/*.exe
             name: Cacaduu-Upload-Windows
+          - os: macos-latest
+            script: build:mac
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            files: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            name: Cacaduu-Upload-macOS
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-audit --no-fund
-      - run: npm test
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: npm ci --no-audit --no-fund
+      - run: cargo test --manifest-path src-tauri/Cargo.toml
       - run: npm run ${{ matrix.script }}
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}

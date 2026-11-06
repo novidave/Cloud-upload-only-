@@ -1,6 +1,22 @@
 "use strict";
 
-const api = window.cacaduu;
+// The few calls to the app (Tauri commands in src-tauri/src/main.rs).
+const { invoke } = window.__TAURI__.core;
+const api = {
+  state: () => invoke("get_state"),
+  signIn: (email, password) =>
+    invoke("sign_in", { email, password }).then(
+      () => ({ ok: true }),
+      (error) => ({ ok: false, error: String(error) }),
+    ),
+  signOut: () => invoke("sign_out"),
+  chooseShop: (id) => invoke("choose_shop", { id }),
+  chooseFolder: () => invoke("choose_folder"),
+  checkNow: () => invoke("check_now"),
+  setAutostart: (enabled) => invoke("set_autostart", { enabled }),
+  openSite: () => invoke("open_site"),
+  onState: (listener) => window.__TAURI__.event.listen("state", (event) => listener(event.payload)),
+};
 const $ = (id) => document.getElementById(id);
 let current = null;
 
