@@ -1,0 +1,60 @@
+{
+  "name": "cacaduu-upload",
+  "productName": "Cacaduu Upload",
+  "version": "1.0.0",
+  "description": "Sends the newest stock file from the shop's export folder to cacaduu.com in the background.",
+  "author": "Cacaduu",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "dist:win": "electron-builder --win nsis --x64 --publish never",
+    "dist:mac": "electron-builder --mac dmg --x64 --arm64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.10.2",
+    "electron-builder": "26.18.1"
+  },
+  "build": {
+    "appId": "com.cacaduu.upload",
+    "productName": "Cacaduu Upload",
+    "artifactName": "Cacaduu-Upload-${version}-${arch}.${ext}",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "build/icon.png",
+      "build/tray.png",
+      "build/trayTemplate.png",
+      "build/trayTemplate@2x.png",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Cacaduu Upload",
+      "artifactName": "Cacaduu-Upload-Setup-${version}.${ext}"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.png",
+      "category": "public.app-category.business",
+      "identity": "-"
+    },
+    "dmg": {
+      "title": "Cacaduu Upload",
+      "artifactName": "Cacaduu-Upload-${version}-${arch}.${ext}"
+    }
+  }
+}

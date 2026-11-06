@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cacaduu Upload</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../../build/icon.png" alt="" width="36" height="36" />
+        <h1 id="title">Export folder</h1>
+      </header>
+      <p class="intro" id="intro"></p>
+
+      <form id="login" hidden>
+        <h2 id="sign_in_title"></h2>
+        <label><span id="l_email"></span><input id="email" type="email" autocomplete="username" required /></label>
+        <label><span id="l_password"></span><input id="password" type="password" autocomplete="current-password" required /></label>
+        <p class="error" id="login_error" hidden></p>
+        <button type="submit" class="primary" id="sign_in"></button>
+      </form>
+
+      <section id="sync" hidden>
+        <div class="row" id="shop_row" hidden>
+          <span class="label" id="l_shop"></span>
+          <select id="shop"></select>
+        </div>
+
+        <div class="folder">
+          <span class="label" id="l_folder"></span>
+          <div class="folder-line">
+            <code id="folder_path"></code>
+            <button type="button" id="choose_folder"></button>
+          </div>
+        </div>
+
+        <div class="status" id="status_box">
+          <span class="dot" id="dot"></span>
+          <p id="status"></p>
+        </div>
+
+        <dl>
+          <dt id="l_latest"></dt><dd id="latest"></dd>
+          <dt id="l_last"></dt><dd id="last"></dd>
+          <dt id="l_next"></dt><dd id="next"></dd>
+        </dl>
+
+        <div class="actions">
+          <button type="button" class="primary" id="check_now"></button>
+          <button type="button" id="open_site"></button>
+        </div>
+
+        <footer>
+          <label class="check" id="autostart_row"><input type="checkbox" id="autostart" /> <span id="l_autostart"></span></label>
+          <span class="who"><span id="who"></span> · <a href="#" id="sign_out"></a></span>
+        </footer>
+      </section>
+    </main>
+    <script src="page.js"></script>
+  </body>
+</html>
